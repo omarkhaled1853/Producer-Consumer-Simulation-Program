@@ -101,6 +101,7 @@ export default  {
     
     return {
       value: null,
+      intervalId: null,
       configKonva: {
           width: window.innerWidth,
           height: 800,
@@ -119,7 +120,10 @@ export default  {
       machines:[],
       lines:[],
       shapes:[],
-      texts:[]
+      texts:[],
+      fetched:[],
+      fetchedData: [],
+     
       
     };
   },
@@ -296,23 +300,76 @@ shapeClicked(type, index) {
         console.log(this.graph);
     }
 },
-
-
-
-replay()
+async replay()
 {
     //  fetch of replay
+    this.startFetching(false);
+    
 },
-start_simulation()
+async start_simulation()
 {
    //array of links
-}
+   //mapping of graph in back
+   await fetch("http://localhost:8080/    ",{
+          method:"POST",
+          body:this.graph
+      })
+      this.startFetching(true);
+},
+async fetchData() {
+  ///please i want object on  form EX ----> {name:m0, color:green }
+  //mapinfg of simulation in back
+  await fetch("http://localhost:8080/    ",{
+          method:"GET",
+      }).then(res=>res.json)
+        .then(data=>this.fetched=data)
+        for (let i = 0; i < this.fetched.length; i++) 
+            {
+              const fetchedItem = this.fetched[i];
+              // Update shapes array 
+              const shapeIndex = this.shapes.findIndex(shape => shape.id === fetchedItem.name);
+              if (shapeIndex !== -1) {
+                this.$set(this.shapes, shapeIndex, { ...this.shapes[shapeIndex], fill: fetchedItem.color });
+              }
+              // Update machines array 
+              const machineIndex = this.machines.findIndex(machine => machine.id === fetchedItem.id);
+              if (machineIndex !== -1) {
+                this.$set(this.machines, machineIndex, { ...this.machines[machineIndex], color: fetchedItem.color });
+              }
+            }
+    },
+async  fetchreplayData(){
+      //maping of replay in back
+  await fetch("http://localhost:8080/    ",{
+          method:"GET",
+      }).then(res=>res.json)
+        .then(data=>this.fetched=data)
+        for (let i = 0; i < this.fetched.length; i++) 
+            {
+              const fetchedItem = this.fetched[i];
+              // Update shapes array 
+              const shapeIndex = this.shapes.findIndex(shape => shape.id === fetchedItem.name);
+              if (shapeIndex !== -1) {
+                this.$set(this.shapes, shapeIndex, { ...this.shapes[shapeIndex], fill: fetchedItem.color });
+              }
+              // Update machines array 
+              const machineIndex = this.machines.findIndex(machine => machine.id === fetchedItem.id);
+              if (machineIndex !== -1) {
+                this.$set(this.machines, machineIndex, { ...this.machines[machineIndex], color: fetchedItem.color });
+              }
+            }
 
-   
-  }
-}
-
-
+    },
+    startFetching(bool) {
+      clearInterval(this.intervalId);
+      if(bool==true)
+          this.intervalId = setInterval(this.fetchData, 500);
+      else
+      this.intervalId = setInterval(this.fetchreplayData, 500);
+    },
+  },
+ 
+};
 </script>
 
 <style>

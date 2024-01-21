@@ -121,8 +121,28 @@ export default  {
       lines:[],
       shapes:[],
       texts:[],
-      fetched:[],
-      fetchedData: [],
+     fetched: [
+        {
+          name:'m1',
+          color:"rgb(0, 128, 255)"
+        },
+        {
+          name:'m2',
+          color:"rgb(153,51,255)"
+        },
+        {
+          name:'m3',
+          color:"rgb(115,230,0)"
+        },
+        {
+          name:'q0',
+          color:"q0"+"\n"+"10"
+        },
+        {
+          name:'q1',
+          color:"q1"+"\n"+"20"
+        },
+      ],
      
       
     };
@@ -145,7 +165,7 @@ export default  {
                     this.currentShape = {
                       x: position.x,
                       y: position.y,
-                      fill:'#FFFFFF',
+                      fill:"rgb(128,128,128)",
                       strokeWidth:2,
                       radius: 50,
                       id:"m"+String(this.machineid)
@@ -310,15 +330,18 @@ async start_simulation()
 {
    //array of links
    //mapping of graph in back
+   //set graph
    await fetch("http://localhost:8080/    ",{
           method:"POST",
           body:this.graph
       })
       this.startFetching(true);
+    
 },
 async fetchData() {
   ///please i want object on  form EX ----> {name:m0, color:green }
   //mapping of simulation in back
+  //update 
   await fetch("http://localhost:8080/    ",{
           method:"GET",
       }).then(res=>res.json)
@@ -326,24 +349,24 @@ async fetchData() {
         for (let i = 0; i < this.fetched.length; i++) 
             {
               const fetchedItem = this.fetched[i];
-              if(fetchedItem[0]=='m')
+              if(fetchedItem.name[0]=='m')
                     {
                       // Update shapes array 
                       const shapeIndex = this.shapes.findIndex(shape => shape.id === fetchedItem.name);
                       if (shapeIndex !== -1) {
-                        this.$set(this.shapes, shapeIndex, { ...this.shapes[shapeIndex], fill: fetchedItem.color });
+                        this.shapes[shapeIndex].fill=fetchedItem.color
                       }
                       // Update machines array 
                       const machineIndex = this.machines.findIndex(machine => machine.id === fetchedItem.name);
                       if (machineIndex !== -1) {
-                        this.$set(this.machines, machineIndex, { ...this.machines[machineIndex], color: fetchedItem.color });
+                        this.machines[machineIndex].fill=fetchedItem.color
                       }
                     }
                     else
                     {
                       const textIndex = this.texts.findIndex(text => text.id === fetchedItem.name);
                         if (textIndex !== -1) {
-                          this.$set(this.texts, textIndex, { ...this.texts[textIndex], text: fetchedItem.text });
+                          this.texts[textIndex].text = fetchedItem.color;
                         }
                     }
                   }
@@ -357,24 +380,24 @@ async  fetchreplayData(){
         for (let i = 0; i < this.fetched.length; i++) 
             {
               const fetchedItem = this.fetched[i];
-              if(fetchedItem[0]=='m')
+              if(fetchedItem.name[0]=='m')
                     {
                       // Update shapes array 
                       const shapeIndex = this.shapes.findIndex(shape => shape.id === fetchedItem.name);
                       if (shapeIndex !== -1) {
-                        this.$set(this.shapes, shapeIndex, { ...this.shapes[shapeIndex], fill: fetchedItem.color });
+                        this.shapes[shapeIndex].fill=fetchedItem.color
                       }
                       // Update machines array 
                       const machineIndex = this.machines.findIndex(machine => machine.id === fetchedItem.name);
                       if (machineIndex !== -1) {
-                        this.$set(this.machines, machineIndex, { ...this.machines[machineIndex], color: fetchedItem.color });
+                        this.machines[machineIndex].fill=fetchedItem.color
                       }
                     }
                     else
                     {
                       const textIndex = this.texts.findIndex(text => text.id === fetchedItem.name);
                         if (textIndex !== -1) {
-                          this.$set(this.texts, textIndex, { ...this.texts[textIndex], text: fetchedItem.text });
+                          this.texts[textIndex].text = fetchedItem.color;
                         }
                     }
             }

@@ -121,30 +121,7 @@ export default  {
       lines:[],
       shapes:[],
       texts:[],
-     fetched: [
-        {
-          name:'m1',
-          color:"rgb(0, 128, 255)"
-        },
-        {
-          name:'m2',
-          color:"rgb(153,51,255)"
-        },
-        {
-          name:'m3',
-          color:"rgb(115,230,0)"
-        },
-        {
-          name:'q0',
-          color:"q0"+"\n"+"10"
-        },
-        {
-          name:'q1',
-          color:"q1"+"\n"+"20"
-        },
-      ],
-     
-      
+      fetched: [],
     };
   },
   methods: {
@@ -331,9 +308,29 @@ async start_simulation()
    //array of links
    //mapping of graph in back
    //set graph
+   let backend = [];
+let obj = null;
+
+for (let i = 0; i < this.graph.length; i++) {
+    let x = this.graph[i].source;
+    obj = {
+        source: x,
+        destination: []
+    };
+      let v=0;
+    for (let j = 0; j < this.graph.length; j++) {
+        if (this.graph[j].source === x) {
+            obj.destination[v]=this.graph[j].destination;
+            v++;
+        }
+    }
+
+    backend.push({ ...obj });
+}
+console.log(backend)
    await fetch("http://localhost:8080/    ",{
           method:"POST",
-          body:this.graph
+          body:JSON.stringify(backend)
       })
       this.startFetching(true);
     

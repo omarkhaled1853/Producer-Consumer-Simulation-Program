@@ -1,7 +1,11 @@
 package models;
 
 public class Product {
-    private String color = "black";
+    private String color;
+
+    public Product(String color) {
+        this.color = color;
+    }
 
     public String getColor() {
         return color;

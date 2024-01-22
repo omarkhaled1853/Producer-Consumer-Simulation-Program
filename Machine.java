@@ -1,11 +1,7 @@
-package models;
-
-import service.Simulator;
-
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
-public class Machine implements Runnable{
+public class Machine implements Runnable {
     private final String id;
     private Product product;
 
@@ -35,7 +31,7 @@ public class Machine implements Runnable{
                             state = false;
                             product = prevQueues.get(i).take();
 
-                            this.color = product.getColor();
+                            this.color = product.color();
 //                            System.out.println(product.color() + " from machine " + id + " machine now colored with " + this.getColor());
 
                             prevQueues.get(i).notifyAll();

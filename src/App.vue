@@ -304,10 +304,7 @@ shapeClicked(type, index) {
 // },
 async start_simulation()
 {
-   //array of links
-   //mapping of graph in back
-   //set graph
-   let backend = [];
+let backend = [];
 let obj = null;
 
 for (let i = 0; i < this.graph.length; i++) {
@@ -326,14 +323,17 @@ for (let i = 0; i < this.graph.length; i++) {
 
     backend.push({ ...obj });
 }
-  await fetch("http://localhost:8080/start",{
-          method:"POST",
-    body: JSON.stringify(backend) // Stringify the JSON data
-      })
-      if (!response.ok) {
-      throw new Error('Failed to start simulation');
-    }
+const response = await fetch("http://localhost:8080/api/start", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(backend)
+        });
 
+        if (!response.ok) {
+            throw new Error('Failed to start simulation');
+        }
       this.startFetching(true);
     
 },

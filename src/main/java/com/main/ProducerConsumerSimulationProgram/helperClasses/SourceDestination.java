@@ -1,4 +1,4 @@
-package helperClasses;
+package com.main.ProducerConsumerSimulationProgram.helperClasses;
 
 import java.util.List;
 
@@ -20,5 +20,13 @@ public class SourceDestination {
 
     public void setDestination(List<String> destination) {
         this.destination = destination;
+    }
+
+    @Override
+    public String toString() {
+        return "SourceDestination{" +
+                "source='" + source + '\'' +
+                ", destination=" + destination +
+                '}';
     }
 }

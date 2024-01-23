@@ -1,13 +1,16 @@
-package service;
+package com.main.ProducerConsumerSimulationProgram.service;
 
-import helperClasses.SourceDestination;
-import models.Machine;
-import models.Product;
+import com.main.ProducerConsumerSimulationProgram.helperClasses.SourceDestination;
+import com.main.ProducerConsumerSimulationProgram.models.Machine;
+import com.main.ProducerConsumerSimulationProgram.models.Memento;
+import com.main.ProducerConsumerSimulationProgram.models.Product;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
+@Service
 public class Simulator {
     ArrayList<Machine> machines = new ArrayList<>();
     Map<String, BlockingQueue<Product>> queues = new HashMap<>();
@@ -16,6 +19,8 @@ public class Simulator {
     BlockingQueue<Product> q0;
     char maxQueueNum = '0';
     Long productNum = generateRandomProducts();
+
+    Memento memento = new Memento();
 //    public Simulator(Map<String, List<String>> graph) throws InterruptedException {
 //        this.graph = graph;
 //        setProduct();
@@ -29,6 +34,10 @@ public class Simulator {
         setQueues();
         setMachines();
         startOperation();
+    }
+
+    public void replay(){
+        memento.replay();
     }
 
     public Map<String, List<String>> getGraph(List<SourceDestination> list){
@@ -75,6 +84,7 @@ public class Simulator {
                 machines.add(machine);
             }
         }
+        memento.save(threads);
     }
     private void startOperation(){
         for (Thread thread: threads)
@@ -82,15 +92,25 @@ public class Simulator {
     }
     public List<UsedObject> update(){
         List<UsedObject> usedObjects = new ArrayList<>();
+        Map<String, String> UpdatedQueues = new HashMap<>();
+
+        for (Machine machine: machines){
+            if (graph.get("q0").contains(machine.getId()))
+                UpdatedQueues.put("q0", Integer.toString(q0.size()));
+
+            UpdatedQueues.put(graph.get(machine.getId()).get(0), Integer.toString(machine.getNextQueue().size()));
+        }
+
+        for (Map.Entry<String, String> entry: UpdatedQueues.entrySet()) {
+            UsedObject usedObject = new UsedObject(entry.getKey(), entry.getValue());
+            usedObjects.add(usedObject);
+        }
 
         for (Machine machine: machines){
             UsedObject usedObject = new UsedObject(machine.getId(), machine.getColor());
             usedObjects.add(usedObject);
         }
-//        for (Map.Entry<String, BlockingQueue<Product>> entry: queues.entrySet()){
-//            UsedObject usedObject = new UsedObject(entry.getKey(), Integer.toString(entry.getValue().size()));
-//            usedObjects.add(usedObject);
-//        }
+
         return usedObjects;
     }
     private List<BlockingQueue<Product>> setPrevious(String machineId){

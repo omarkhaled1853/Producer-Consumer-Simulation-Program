@@ -1,6 +1,6 @@
-package models;
+package com.main.ProducerConsumerSimulationProgram.models;
 
-import service.Simulator;
+import com.main.ProducerConsumerSimulationProgram.service.Simulator;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -61,5 +61,9 @@ public class Machine implements Runnable{
     }
     public String getId() {
         return id;
+    }
+
+    public BlockingQueue<Product> getNextQueue() {
+        return nextQueue;
     }
 }

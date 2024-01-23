@@ -1,10 +1,10 @@
-package controllers;
+package com.main.ProducerConsumerSimulationProgram.controllers;
 
-import helperClasses.SourceDestination;
+import com.main.ProducerConsumerSimulationProgram.helperClasses.SourceDestination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import service.Simulator;
-import service.UsedObject;
+import com.main.ProducerConsumerSimulationProgram.service.Simulator;
+import com.main.ProducerConsumerSimulationProgram.service.UsedObject;
 
 import java.util.List;
 
@@ -27,6 +27,12 @@ public class Controller {
 
     @GetMapping ("/update")
     public List<UsedObject> update(){
+        System.out.println(simulator.update());
         return simulator.update();
+    }
+
+    @GetMapping("/replay")
+    public void replay(){
+        simulator.replay();
     }
 }

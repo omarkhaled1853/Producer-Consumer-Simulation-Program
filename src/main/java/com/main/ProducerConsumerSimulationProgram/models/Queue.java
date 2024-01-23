@@ -1,4 +1,4 @@
-package models;
+package com.main.ProducerConsumerSimulationProgram.models;
 
 import java.util.concurrent.BlockingQueue;
 

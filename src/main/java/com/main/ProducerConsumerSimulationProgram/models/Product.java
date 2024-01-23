@@ -1,4 +1,4 @@
-package models;
+package com.main.ProducerConsumerSimulationProgram.models;
 
 public class Product {
     private String color;

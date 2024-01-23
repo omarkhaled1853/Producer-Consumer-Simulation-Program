@@ -112,7 +112,6 @@ export default  {
       rectangle:false,
       currentShape:null,
       currenttext:null,
-      edge:null,
       graph:[],
       machineid:0,
       queueid:-1,
@@ -297,12 +296,12 @@ shapeClicked(type, index) {
         console.log(this.graph);
     }
 },
-async replay()
-{
-    //  fetch of replay
-    this.startFetching(false);
+// async replay()
+// {
+//     //  fetch of replay
+//     this.startFetching(false);
     
-},
+// },
 async start_simulation()
 {
    //array of links
@@ -327,11 +326,14 @@ for (let i = 0; i < this.graph.length; i++) {
 
     backend.push({ ...obj });
 }
-console.log(backend)
-   await fetch("http://localhost:8080/    ",{
+  await fetch("http://localhost:8080/start",{
           method:"POST",
-          body:JSON.stringify(backend)
+    body: JSON.stringify(backend) // Stringify the JSON data
       })
+      if (!response.ok) {
+      throw new Error('Failed to start simulation');
+    }
+
       this.startFetching(true);
     
 },
@@ -339,7 +341,7 @@ async fetchData() {
   ///please i want object on  form EX ----> {name:m0, color:green }
   //mapping of simulation in back
   //update 
-  await fetch("http://localhost:8080/    ",{
+  await fetch("http://localhost:8080/update",{
           method:"GET",
       }).then(res=>res.json)
         .then(data=>this.fetched=data)

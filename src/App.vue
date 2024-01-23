@@ -296,12 +296,12 @@ shapeClicked(type, index) {
         console.log(this.graph);
     }
 },
-// async replay()
-// {
-//     //  fetch of replay
-//     this.startFetching(false);
+async replay()
+{
+    //  fetch of replay
+    this.startFetching(false);
     
-// },
+},
 async start_simulation()
 {
 let backend = [];
@@ -323,18 +323,15 @@ for (let i = 0; i < this.graph.length; i++) {
 
     backend.push({ ...obj });
 }
-const response = await fetch("http://localhost:8080/api/start", {
+await fetch("http://localhost:8080/start", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(backend)
         });
-
-        if (!response.ok) {
-            throw new Error('Failed to start simulation');
-        }
-      this.startFetching(true);
+       this.startFetching(true);
+      // this.startFetching(true);
     
 },
 async fetchData() {
@@ -343,12 +340,12 @@ async fetchData() {
   //update 
   await fetch("http://localhost:8080/update",{
           method:"GET",
-      }).then(res=>res.json)
-        .then(data=>this.fetched=data)
+      }).then(res=>res.json())
+        .then(data=>this.fetched = data)
         for (let i = 0; i < this.fetched.length; i++) 
             {
               const fetchedItem = this.fetched[i];
-              if(fetchedItem.name[0]=='m')
+              if(fetchedItem.name[0] === 'm')
                     {
                       // Update shapes array 
                       const shapeIndex = this.shapes.findIndex(shape => shape.id === fetchedItem.name);
@@ -372,7 +369,7 @@ async fetchData() {
     },
 async  fetchreplayData(){
       //mapping of replay in back
-  await fetch("http://localhost:8080/    ",{
+  await fetch("http://localhost:8080/replay",{
           method:"GET",
       }).then(res=>res.json)
         .then(data=>this.fetched=data)

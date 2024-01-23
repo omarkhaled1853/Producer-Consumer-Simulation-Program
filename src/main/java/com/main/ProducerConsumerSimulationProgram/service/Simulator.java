@@ -3,6 +3,7 @@ package com.main.ProducerConsumerSimulationProgram.service;
 import com.main.ProducerConsumerSimulationProgram.helperClasses.SourceDestination;
 import com.main.ProducerConsumerSimulationProgram.models.Machine;
 import com.main.ProducerConsumerSimulationProgram.models.Memento;
+import com.main.ProducerConsumerSimulationProgram.models.Observer;
 import com.main.ProducerConsumerSimulationProgram.models.Product;
 import org.springframework.stereotype.Service;
 
@@ -21,13 +22,7 @@ public class Simulator {
     Long productNum = generateRandomProducts();
 
     Memento memento = new Memento();
-//    public Simulator(Map<String, List<String>> graph) throws InterruptedException {
-//        this.graph = graph;
-//        setProduct();
-//        setQueues();
-//        setMachines();
-//        startOperation();
-//    }
+    Observer observer = new Observer();
 
     public void start() throws InterruptedException {
         setProduct();
@@ -91,27 +86,7 @@ public class Simulator {
             thread.start();
     }
     public List<UsedObject> update(){
-        List<UsedObject> usedObjects = new ArrayList<>();
-        Map<String, String> UpdatedQueues = new HashMap<>();
-
-        for (Machine machine: machines){
-            if (graph.get("q0").contains(machine.getId()))
-                UpdatedQueues.put("q0", Integer.toString(q0.size()));
-
-            UpdatedQueues.put(graph.get(machine.getId()).get(0), Integer.toString(machine.getNextQueue().size()));
-        }
-
-        for (Map.Entry<String, String> entry: UpdatedQueues.entrySet()) {
-            UsedObject usedObject = new UsedObject(entry.getKey(), entry.getValue());
-            usedObjects.add(usedObject);
-        }
-
-        for (Machine machine: machines){
-            UsedObject usedObject = new UsedObject(machine.getId(), machine.getColor());
-            usedObjects.add(usedObject);
-        }
-
-        return usedObjects;
+        return observer.update(machines, graph, q0);
     }
     private List<BlockingQueue<Product>> setPrevious(String machineId){
         List<BlockingQueue<Product>> prevQueue = new ArrayList<>();

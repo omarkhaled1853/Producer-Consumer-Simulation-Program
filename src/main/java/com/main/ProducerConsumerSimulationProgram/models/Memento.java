@@ -1,19 +1,27 @@
 package com.main.ProducerConsumerSimulationProgram.models;
 
-
-import ch.qos.logback.core.joran.sanity.Pair;
-
 import java.util.List;
-import java.util.Map;
 
 public class Memento {
-    private Pair<Map<Queue, List<Machine>>, Map<Machine, Queue>> state;
+    private final List<Machine> machineList;
+    private final List<Queue> queueList;
 
-    public Memento(Pair<Map<Queue, List<Machine>>, Map<Machine, Queue>> state) {
-        this.state = state;
+    public Memento(List<Machine> machineList, List<Queue> queueList) {
+        this.machineList = machineList;
+        this.queueList = queueList;
     }
 
-    public Pair<Map<Queue, List<Machine>>, Map<Machine, Queue>> getState() {
-        return state;
+    public List<Machine> getMachineList() {
+        return machineList;
+    }
+
+    public List<Queue> getQueueList() {
+        return queueList;
+    }
+
+    @Override
+    public String toString() {
+        return "machineList=" + machineList +
+                ", queueList=" + queueList;
     }
 }

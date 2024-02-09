@@ -1,26 +1,33 @@
 package com.main.ProducerConsumerSimulationProgram.models;
 
-import ch.qos.logback.core.joran.sanity.Pair;
-
 import java.util.List;
-import java.util.Map;
 
 public class Originator {
-    private Pair<Map<Queue, List<Machine>>, Map<Machine, Queue>> state;
+    private List<Machine> machineList;
+    private List<Queue> queueList;
 
-    public Pair<Map<Queue, List<Machine>>, Map<Machine, Queue>> getState() {
-        return state;
+    public void setMachineList(List<Machine> machineList) {
+        this.machineList = machineList;
     }
 
-    public void setState(Pair<Map<Queue, List<Machine>>, Map<Machine, Queue>> state) {
-        this.state = state;
+    public void setQueueList(List<Queue> queueList) {
+        this.queueList = queueList;
+    }
+
+    public List<Machine> getMachineList() {
+        return machineList;
+    }
+
+    public List<Queue> getQueueList() {
+        return queueList;
     }
 
     public Memento saveStateToMemento(){
-        return new Memento(state);
+        return new Memento(machineList, queueList);
     }
 
-    public void getStateToMemento(Memento memento){
-        state = memento.getState();
+    public void getStateFromMemento(Memento memento){
+        machineList = memento.getMachineList();
+        queueList = memento.getQueueList();
     }
 }

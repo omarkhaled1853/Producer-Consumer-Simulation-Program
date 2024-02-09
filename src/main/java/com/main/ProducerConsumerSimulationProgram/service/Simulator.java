@@ -2,7 +2,6 @@ package com.main.ProducerConsumerSimulationProgram.service;
 
 import com.main.ProducerConsumerSimulationProgram.helperClasses.SourceDestination;
 import com.main.ProducerConsumerSimulationProgram.models.Machine;
-import com.main.ProducerConsumerSimulationProgram.models.Memento;
 import com.main.ProducerConsumerSimulationProgram.models.Product;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +77,7 @@ public class Simulator {
             if(entry.getKey().contains("m")){
                 List<BlockingQueue<Product>> prevQueues = setPrevious(entry.getKey());
                 BlockingQueue<Product> nextQueue = queues.get(entry.getValue().get(0));
-                Machine machine = new Machine(entry.getKey(), generateRandomTime(), prevQueues, nextQueue, this);
+                Machine machine = new Machine(entry.getKey(), generateRandomTime(), prevQueues, nextQueue, this, careTaker);
                 Thread consumerThread = new Thread(machine);
                 threads.add(consumerThread);
                 machines.add(machine);

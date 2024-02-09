@@ -3,7 +3,11 @@
 <div id="simulator">
    
             <div id="toolbar">
-            <button @click="start_simulation()" class="tool" id="start">Start Simulation <i class="fa-solid fa-play"></i> </button>
+            <button @click="start_simulation()" class="tool" id="start">Start Simulation <i class="fa-regular fa-circle-play"></i> </button>
+             <button @click="toggleplaying()" class="tool" id="toggle">
+              <span v-if='!this.stop'>pause <i class="fa-solid fa-pause"></i></span>
+              <span v-else>play <i class="fa-solid fa-play"></i></span> 
+            </button>
             <button @click="replay()" class="tool" id="replay">Replay <i class="fa-solid fa-reply"></i></button>
             <button @click="drawqueue()" class="tool" id="replay"> add queue</button>
             <button @click="drawmachine()" class="tool" id="replay">add machine</button>
@@ -112,7 +116,11 @@ export default  {
       rectangle:false,
       currentShape:null,
       currenttext:null,
+      stop:false,
+      products:0,
+      confirm:false,
       graph:[],
+      begin:false,
       machineid:0,
       queueid:-1,
       queues:[],
@@ -252,6 +260,7 @@ drawlink()
     points:[]
   };
 },
+
 shapeClicked(type, index) {
     if (this.isdraw&&this.lin) {
         if (type === "queue") {
@@ -296,49 +305,70 @@ shapeClicked(type, index) {
         console.log(this.graph);
     }
 },
-async replay()
-{
-    //  fetch of replay
-    this.startFetching(false);
-    
-},
-async start_simulation()
-{
-let backend = [];
-let obj = null;
 
-for (let i = 0; i < this.graph.length; i++) {
-    let x = this.graph[i].source;
-    obj = {
-        source: x,
-        destination: []
-    };
-      let v=0;
-    for (let j = 0; j < this.graph.length; j++) {
-        if (this.graph[j].source === x) {
-            obj.destination[v]=this.graph[j].destination;
-            v++;
+
+
+
+/*API STARTS HERE*/ 
+ async start_simulation()
+    {
+        if(this.begin)
+        {
+          return;
         }
-    }
 
-    backend.push({ ...obj });
-}
-await fetch("http://localhost:8080/start", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(backend)
-        });
-       this.startFetching(true);
-      // this.startFetching(true);
-    
+      this.begin=true;
+    let backend = [];
+    let obj = null;
+
+    for (let i = 0; i < this.graph.length; i++) {
+        let x = this.graph[i].source;
+        obj = {
+            source: x,
+            destination: []
+        };
+          let v=0;
+        for (let j = 0; j < this.graph.length; j++) {
+            if (this.graph[j].source === x) {
+                obj.destination[v]=this.graph[j].destination;
+                v++;
+            }
+        }
+
+        backend.push({ ...obj });
+    }
+    await fetch("http://localhost:8080/start", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(backend)
+            }).then(res=>res.json()).then(data=>this.products=data);
+
+          this.startFetching();
+        
+    },
+
+
+
+
+startFetching() {
+
+    console.log(this.queueid);  
+
+      if(!this.stop)
+      {
+              clearInterval(this.intervalId);         
+              this.intervalId = setInterval(this.fetchData_mach, 500);
+      }
 },
-async fetchData() {
-  ///please i want object on  form EX ----> {name:m0, color:green }
-  //mapping of simulation in back
-  //update 
-  await fetch("http://localhost:8080/update",{
+
+
+
+async fetchData_mach() {
+this.confirm=false;
+
+  await fetch("http://localhost:8080/machines",{
           method:"GET",
       }).then(res=>res.json())
         .then(data=>this.fetched = data)
@@ -347,69 +377,99 @@ async fetchData() {
               const fetchedItem = this.fetched[i];
               if(fetchedItem.name[0] === 'm')
                     {
-                      // Update shapes array 
+                      // Update shapes &tests array 
                       const shapeIndex = this.shapes.findIndex(shape => shape.id === fetchedItem.name);
                       if (shapeIndex !== -1) {
                         this.shapes[shapeIndex].fill=fetchedItem.color
+                        this.texts[shapeIndex]=String(fetchedItem.time)    //time
                       }
                       // Update machines array 
                       const machineIndex = this.machines.findIndex(machine => machine.id === fetchedItem.name);
                       if (machineIndex !== -1) {
-                        this.machines[machineIndex].fill=fetchedItem.color
+                        this.machines[machineIndex].fill=fetchedItem.color  //color
                       }
+
+                    
                     }
-                    else
-                    {
-                      const textIndex = this.texts.findIndex(text => text.id === fetchedItem.name);
-                        if (textIndex !== -1) {
-                          this.texts[textIndex].text = fetchedItem.color;
-                        }
-                    }
-                  }
+                   
+            }
+            this.fetchData_queue();
     },
-async  fetchreplayData(){
-      //mapping of replay in back
-  await fetch("http://localhost:8080/replay",{
+
+async fetchData_queue()
+{
+       await fetch("http://localhost:8080/queues",{
           method:"GET",
-      }).then(res=>res.json)
-        .then(data=>this.fetched=data)
+      }).then(res=>res.json())
+        .then(data=>this.fetched = data)
         for (let i = 0; i < this.fetched.length; i++) 
             {
               const fetchedItem = this.fetched[i];
-              if(fetchedItem.name[0]=='m')
+              if(fetchedItem.name[0] === 'q')
                     {
-                      // Update shapes array 
+                      // Update texts array 
                       const shapeIndex = this.shapes.findIndex(shape => shape.id === fetchedItem.name);
                       if (shapeIndex !== -1) {
-                        this.shapes[shapeIndex].fill=fetchedItem.color
-                      }
-                      // Update machines array 
-                      const machineIndex = this.machines.findIndex(machine => machine.id === fetchedItem.name);
-                      if (machineIndex !== -1) {
-                        this.machines[machineIndex].fill=fetchedItem.color
-                      }
-                    }
-                    else
-                    {
-                      const textIndex = this.texts.findIndex(text => text.id === fetchedItem.name);
-                        if (textIndex !== -1) {
-                          this.texts[textIndex].text = fetchedItem.color;
+                        this.texts[shapeIndex]=String(fetchedItem.nums)
+                        if(fetchedItem.name.substring(1)===String(this.queueid))    //if the name of queue is same as queueid(holds last queue id)
+                        {
+                           if(fetchedItem.nums===String(this.products))         //if the number is the same as we start then stop
+                           {
+                               this.stop=true;
+                           }
                         }
+                      }
+                      
                     }
+                   
             }
+            this.confirm=true;
+},
 
-    },
-    startFetching(bool) {
-      clearInterval(this.intervalId);
-      if(bool==true)
-          this.intervalId = setInterval(this.fetchData, 500);
-      else
-      this.intervalId = setInterval(this.fetchreplayData, 500);
-    },
+
+async replay()
+{
+    await fetch("http://localhost:8080/replay",{
+      method:"GET",
+    })
+
+
+    this.startFetching();
+    
+},
+
+
+toggleplaying()
+{
+    if(this.confirm)
+    {
+        this.stop=!this.stop;
+   
+        if(!this.stop)
+        {
+          this.startFetching();
+        }
+    }
+}
+
+
+
+
+
+
   },
  
 };
 </script>
+
+
+
+
+
+
+
+
+
 
 <style>
 @import "~@fortawesome/fontawesome-free/css/all.min.css";

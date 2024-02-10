@@ -1,28 +1,28 @@
 package com.main.ProducerConsumerSimulationProgram.models;
 
-import com.main.ProducerConsumerSimulationProgram.service.Service;
+import com.main.ProducerConsumerSimulationProgram.services.ProducerConsumerService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-public class simulator {
-    Service service = new Service();
-    public void start(){
-        List<Thread> threads = service.getThreads();
-        for (Thread thread : threads){
+@Service
+public class Simulator {
+    public void start(ProducerConsumerService producerConsumerService){
+        for (Thread thread : producerConsumerService.getThreads()){
             thread.start();
         }
     }
 
-    public void update(){
-
+    public Memento update(ProducerConsumerService producerConsumerService){
+        return new Memento(producerConsumerService.getOriginator().getMachineList(), producerConsumerService.getOriginator().getQueueList());
     }
 
     public void rePlay(){
 
     }
 
-    public void end(){
-        List<Thread> threads = service.getThreads();
+    public void end(ProducerConsumerService producerConsumerService){
+        List<Thread> threads = producerConsumerService.getThreads();
         for (Thread thread : threads){
             thread.interrupt();
         }

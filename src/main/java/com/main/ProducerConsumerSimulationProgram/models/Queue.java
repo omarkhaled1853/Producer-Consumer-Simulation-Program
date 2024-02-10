@@ -6,13 +6,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Queue {
-    private final String id;
+    private final String name;
     private final BlockingQueue<Product> queue = new LinkedBlockingQueue<>();
     private int size = 0;
     private final List<Observer> observers = new ArrayList<>();
 
-    public Queue(String id) {
-        this.id = id;
+    public Queue(String name) {
+        this.name = name;
     }
 
     public int getSize() {
@@ -34,8 +34,8 @@ public class Queue {
         }
     }
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
     public Boolean isEmpty(){
@@ -50,5 +50,13 @@ public class Queue {
     public Product dequeue() throws InterruptedException {
         size = queue.size();
         return queue.take();
+    }
+
+    @Override
+    public String toString() {
+        return "Queue{" +
+                "name='" + name + '\'' +
+                ", size=" + size +
+                '}';
     }
 }

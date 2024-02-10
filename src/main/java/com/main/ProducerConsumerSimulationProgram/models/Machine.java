@@ -3,7 +3,7 @@ package com.main.ProducerConsumerSimulationProgram.models;
 import java.util.List;
 
 public class Machine implements Runnable, Observer{
-    private final String id;
+    private final String name;
     private final long time;
     private String color =  "rgb(128, 128, 128)";
     private Boolean isReady = true;
@@ -13,8 +13,8 @@ public class Machine implements Runnable, Observer{
     private final Originator originator;
     private final CareTaker careTaker;
 
-    public Machine(String id, long time, List<Queue> prevQueues, Queue nextQueue, Originator originator, CareTaker careTaker) {
-        this.id = id;
+    public Machine(String name, long time, List<Queue> prevQueues, Queue nextQueue, Originator originator, CareTaker careTaker) {
+        this.name = name;
         this.time = time;
         this.prevQueues = prevQueues;
         this.nextQueue = nextQueue;
@@ -27,36 +27,29 @@ public class Machine implements Runnable, Observer{
         while (true){
             for (Queue queue: prevQueues){
                 if (!queue.isEmpty()){
-//                    synchronized (queue){
                         try {
                             Product product = queue.dequeue();
                             color = product.getColor();
                             isReady = false;
-//                            queue.notifyAll();
-                            System.out.println(originator.saveStateToMemento());
+//                            System.out.println(name + " " + prevQueues + " " + nextQueue);
                             save();
                             Thread.sleep(time);
                             isReady = true;
                             color = "rgb(128, 128, 128)";
                             nextQueue.enqueue(product);
-                            nextQueue.notifyObservers();
-                            System.out.println(originator.saveStateToMemento());
+                            update();
                             save();
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-
-//                    }
                 }
             }
-            if(nextQueue.getSize() == 5) {
-                break;
-            }
         }
+
     }
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
     public String getColor() {
@@ -77,13 +70,13 @@ public class Machine implements Runnable, Observer{
 
     @Override
     public void update() {
-        if (isReady) run();
+        if (this.isReady) nextQueue.notifyObservers();
     }
 
     @Override
     public String toString() {
         return "Machine{" +
-                "id='" + id + '\'' +
+                "name='" + name + '\'' +
                 ", color='" + color + '\'' +
                 ", isReady=" + isReady +
                 '}';

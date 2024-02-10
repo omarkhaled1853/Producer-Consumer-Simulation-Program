@@ -30,4 +30,12 @@ public class Originator {
         machineList = memento.getMachineList();
         queueList = memento.getQueueList();
     }
+
+    @Override
+    public String toString() {
+        return "Originator{" +
+                "machineList=" + machineList +
+                ", queueList=" + queueList +
+                '}';
+    }
 }
